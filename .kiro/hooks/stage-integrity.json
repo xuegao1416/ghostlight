@@ -1,0 +1,63 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "typecheck on source save",
+      "description": "Runs tsc --noEmit whenever a TypeScript or CSS file is saved. Strict mode is on, and a single unused import fails the build, so the window between 'it compiles' and 'it does not' must be zero.",
+      "trigger": "FileSave",
+      "matcher": "\\.(ts|tsx)$",
+      "action": {
+        "type": "command",
+        "command": "bun run typecheck"
+      },
+      "timeout": 90,
+      "enabled": true
+    },
+    {
+      "name": "costume parity on scene save",
+      "description": "Runs scripts/parity.ts whenever a scene file is saved. This is the only automated defence of the project's central claim — that both costumes perform the identical beat graph — so it must fire before the change can be believed, not at the end of the session.",
+      "trigger": "FileSave",
+      "matcher": "src/scene/.*\\.ts$",
+      "action": {
+        "type": "command",
+        "command": "bun run scripts/parity.ts"
+      },
+      "timeout": 90,
+      "enabled": true
+    },
+    {
+      "name": "stage contract review on source save",
+      "description": "Asks the agent to re-check a saved stage file against the cue contract: no second data source, no visual derived from a beat id, no cue read in a component to decide layout.",
+      "trigger": "FileSave",
+      "matcher": "src/(styles|components|hooks)/.*\\.(css|tsx|ts)$",
+      "action": {
+        "type": "agent",
+        "prompt": "A stage file was just saved. Check it against the cue contract in .kiro/steering/cue-contract.md and report only real violations:\n\n1. Does this file write any --cue-* custom property? Only src/hooks/useCueStage.ts may write them. Components must read.\n2. Does any visual decision in this file depend on a beat id, a scene id, or a costume name rather than on a --cue-* value or a costume token? `[data-costume='vhs']` overrides for structural differences (drop cap, letterpress) are allowed; branching on costume to pick a different layout is not.\n3. Is there a second source of truth for a value the stage already exposes? CueConsole must read the DOM, not React props.\n4. Are units and ranges still inside the contract (0..1 meters, focus -1..1, a mood the palette knows)?\n\nIf nothing is wrong, say so in one line and stop. Do not refactor proactively. Do not restate the contract back to me."
+      },
+      "timeout": 120,
+      "enabled": true
+    },
+    {
+      "name": "session orientation",
+      "description": "Puts the one-paragraph framing and the verification commands at the top of every session so a fresh agent does not start by re-deriving what GHOSTLIGHT is.",
+      "trigger": "SessionStart",
+      "action": {
+        "type": "command",
+        "command": "echo 'GHOSTLIGHT — an interactive haunting where the stage is the interface. Two costumes (seance / vhs), one 17-beat graph, three endings each. The story hands the stage a StageCue; useCueStage eases it into CSS custom properties; every visual derives from them. Read .kiro/steering/cue-contract.md before changing anything under src/styles or src/hooks. Gates: bun run typecheck · bun run parity · bun run build. Never add a second source of truth for a cue value.'"
+      },
+      "timeout": 30,
+      "enabled": true
+    },
+    {
+      "name": "ship gate on agent stop",
+      "description": "Before the agent declares work finished, the three gates run. A costume that has drifted or a build that does not compile must be reported, not announced as done.",
+      "trigger": "AgentStop",
+      "action": {
+        "type": "command",
+        "command": "bun run typecheck && bun run scripts/parity.ts && bun run build"
+      },
+      "timeout": 240,
+      "enabled": true
+    }
+  ]
+}

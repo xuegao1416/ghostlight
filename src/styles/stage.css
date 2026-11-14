@@ -1,0 +1,437 @@
+/* ============================================================
+   STAGE
+   Everything below is driven by --cue-* custom properties that
+   App.tsx writes from the current StageCue. No animation here
+   knows what "dread" means; the costume decides.
+
+   Composition: the camera sits in the third row. The stage is
+   ahead and above; the dead are behind and below, cropped by the
+   bottom edge of frame. The prose sits in the dark between them.
+   ============================================================ */
+
+.stage {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--ink);
+  transition: background 1.6s ease;
+}
+
+/* ---- the back wall ---- */
+
+.house {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      90% 62% at calc(50% + var(--cue-focus, 0) * 30%) 40%,
+      color-mix(in oklab, var(--accent) calc(var(--cue-intensity, 0.2) * 62%), transparent) 0%,
+      transparent 66%
+    ),
+    linear-gradient(180deg, var(--ink) 0%, var(--ink-2) 54%, var(--ink) 100%);
+  transition: background 2.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* painted ceiling — the one bit of sky anybody ever believed in */
+.house::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 46% 0;
+  background:
+    radial-gradient(circle at 24% 26%, color-mix(in oklab, var(--accent) 13%, transparent), transparent 30%),
+    radial-gradient(circle at 76% 18%, color-mix(in oklab, var(--accent) 9%, transparent), transparent 26%),
+    radial-gradient(circle at 50% 6%, color-mix(in oklab, var(--velvet) 40%, transparent), transparent 44%);
+  opacity: calc(0.3 + var(--cue-intensity, 0.2) * 0.55);
+  filter: blur(1px);
+  transition: opacity 2s ease;
+}
+
+/* ---- the proscenium ----
+   A real arch: the opening is a tunnel into the stage, and its frame
+   is ink-dark so the lit opening reads as lit. */
+
+.arch {
+  position: absolute;
+  left: 50%;
+  top: 1.5vh;
+  width: min(70vw, 880px);
+  height: 26vh;
+  transform: translateX(-50%);
+  border-radius: 44% 44% 0 0 / 30% 30% 0 0;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--accent) 16%, transparent),
+    0 0 90px 8px color-mix(in oklab, #000 70%, transparent);
+  transition: box-shadow 2s ease;
+  /* the far end of the room: blur and fade so the arch belongs to depth */
+  mask-image: linear-gradient(180deg, #000 0%, #000 74%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 74%, transparent 100%);
+}
+
+/* what is on the other side of the arch */
+.arch__opening {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      58% 46% at 50% 88%,
+      color-mix(in oklab, var(--accent) calc(var(--cue-intensity, 0.2) * 62%), transparent) 0%,
+      color-mix(in oklab, var(--accent) calc(var(--cue-intensity, 0.2) * 18%), transparent) 40%,
+      transparent 76%
+    ),
+    radial-gradient(80% 60% at 50% 100%, color-mix(in oklab, var(--velvet) 34%, transparent) 0%, transparent 72%),
+    linear-gradient(180deg, transparent 30%, color-mix(in oklab, var(--ink) 40%, transparent) 100%);
+  transition: background 2.2s ease;
+}
+
+/* the arch itself, drawn as a heavy painted band */
+.arch::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: clamp(10px, 1.6vw, 20px) solid var(--ink);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in oklab, var(--accent) calc(8% + var(--cue-intensity, 0.2) * 22%), transparent),
+    inset 0 0 56px 12px color-mix(in oklab, var(--ink) 88%, transparent);
+  pointer-events: none;
+}
+
+/* the stage curtain, gathered at both jambs */
+.drape {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 15%;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      96deg,
+      color-mix(in oklab, var(--velvet) 92%, #000) 0px,
+      color-mix(in oklab, var(--velvet) 62%, #000) 5px,
+      color-mix(in oklab, var(--velvet) 100%, #000) 11px
+    );
+  opacity: calc(0.5 + var(--cue-intensity, 0.2) * 0.4);
+  transition: opacity 2s ease;
+}
+
+.drape--l {
+  left: 0;
+  mask-image: linear-gradient(90deg, #000 0%, #000 52%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 52%, transparent 100%);
+}
+
+.drape--r {
+  right: 0;
+  mask-image: linear-gradient(270deg, #000 0%, #000 52%, transparent 100%);
+  -webkit-mask-image: linear-gradient(270deg, #000 0%, #000 52%, transparent 100%);
+}
+
+/* ---- the deck: a little perspective so the ghost light stands on something ---- */
+
+/* the deck is implied, not drawn: a soft pool where the ghost light lands on
+   the boards. An explicit edge here reads as a table top and kills the depth. */
+.deck {
+  position: absolute;
+  left: 50%;
+  top: calc(1.5vh + 26vh);
+  width: min(46vw, 560px);
+  height: 5vh;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    color-mix(in oklab, var(--accent) calc(6% + var(--cue-intensity, 0.2) * 16%), transparent) 0%,
+    transparent 70%
+  );
+  filter: blur(14px);
+  opacity: calc(0.4 + var(--cue-intensity, 0.2) * 0.5);
+  transition: opacity 2s ease;
+}
+
+.deck::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 78px,
+    rgba(0, 0, 0, 0.3) 79px,
+    rgba(0, 0, 0, 0.3) 81px
+  );
+  mask-image: linear-gradient(180deg, #000 0%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 100%);
+}
+
+/* ---- fog ---- */
+
+.fog {
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  opacity: calc(var(--cue-fog, 0.3) * 0.95);
+  transition: opacity 2.4s ease;
+  z-index: 2;
+}
+
+.fog__layer {
+  position: absolute;
+  inset: 0;
+  background-repeat: repeat;
+  background-size: 720px 720px;
+  mix-blend-mode: screen;
+  filter: blur(26px);
+  will-change: transform;
+}
+
+.fog__layer--a {
+  background-image: radial-gradient(
+    circle at 26% 52%,
+    color-mix(in oklab, var(--accent) 17%, transparent) 0%,
+    transparent 42%
+  );
+  animation: drift-a 74s linear infinite;
+  opacity: 0.62;
+}
+
+.fog__layer--b {
+  background-image: radial-gradient(
+    circle at 68% 38%,
+    color-mix(in oklab, var(--accent) 13%, transparent) 0%,
+    transparent 46%
+  );
+  animation: drift-b 103s linear infinite reverse;
+  opacity: 0.48;
+}
+
+.fog__layer--c {
+  background-image: radial-gradient(circle at 50% 78%, rgba(255, 255, 255, 0.05) 0%, transparent 44%);
+  animation: drift-a 132s linear infinite;
+  opacity: 0.3;
+}
+
+@keyframes drift-a {
+  from { transform: translate3d(-6%, 2%, 0) scale(1.06); }
+  to   { transform: translate3d(6%, -3%, 0) scale(1.14); }
+}
+@keyframes drift-b {
+  from { transform: translate3d(5%, -2%, 0) scale(1.12); }
+  to   { transform: translate3d(-7%, 3%, 0) scale(1.02); }
+}
+
+/* ---- dust ---- */
+
+.dust {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  opacity: calc(0.12 + var(--cue-intensity, 0.2) * 0.5);
+  transition: opacity 2s ease;
+}
+
+.dust span {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: var(--accent-hot);
+  box-shadow: 0 0 6px 1px color-mix(in oklab, var(--accent) 60%, transparent);
+  animation: mote linear infinite;
+  opacity: 0;
+}
+
+@keyframes mote {
+  0%   { transform: translate3d(0, 0, 0); opacity: 0; }
+  12%  { opacity: 0.9; }
+  88%  { opacity: 0.7; }
+  100% { transform: translate3d(var(--drift, 20px), -140px, 0); opacity: 0; }
+}
+
+/* ---- the audience: what a crowd does that a room full of objects never does
+   ----
+   Six silhouette attempts all failed the same way: a closed outline reads as
+   an object, not as a person, and there is only ~12vh of frame left under the
+   prose. So this does not draw bodies at all — it draws eyes, in rows, and
+   the dark does the rest. */
+
+.audience {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 16vh;
+  z-index: 10;
+  pointer-events: none;
+  opacity: calc(var(--cue-audience, 0) * 0.98);
+  transition: opacity 2.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.audience__row {
+  position: absolute;
+  inset: 0;
+}
+
+.audience__glow,
+.audience__core {
+  position: absolute;
+  inset: 0;
+}
+
+.audience__glow {
+  filter: blur(3px);
+  opacity: calc(0.35 + var(--cue-intensity, 0.2) * 0.55);
+  transition: opacity 2.4s ease;
+}
+
+.audience__core {
+  animation: blink 7.5s steps(1, end) infinite;
+}
+
+/* they do not blink together. each row gets its own timing. */
+.audience__row:nth-child(2) .audience__core {
+  animation-duration: 9.1s;
+  animation-delay: -2.3s;
+}
+.audience__row:nth-child(3) .audience__core {
+  animation-duration: 11.3s;
+  animation-delay: -5.1s;
+}
+.audience__row:nth-child(4) .audience__core {
+  animation-duration: 8.2s;
+  animation-delay: -1.4s;
+}
+.audience__row:nth-child(5) .audience__core {
+  animation-duration: 13.7s;
+  animation-delay: -7.9s;
+}
+
+@keyframes blink {
+  0%,
+  96.4%,
+  100% {
+    opacity: 1;
+  }
+  96.6%,
+  99.4% {
+    opacity: 0.12;
+  }
+}
+
+/* ---- ghost light ---- */
+
+.ghostlight {
+  position: absolute;
+  left: 50%;
+  top: calc(1.5vh + 27vh);
+  width: 18px;
+  height: 18px;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+  pointer-events: none;
+}
+
+.ghostlight__bulb {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0%, var(--accent-hot) 32%, var(--accent) 60%, transparent 74%);
+  box-shadow:
+    0 0 22px 4px color-mix(in oklab, var(--accent) 70%, transparent),
+    0 0 74px 22px color-mix(in oklab, var(--accent) 32%, transparent),
+    0 0 190px 90px color-mix(in oklab, var(--accent) 13%, transparent);
+  opacity: calc(0.55 + var(--cue-intensity, 0.2) * 0.5);
+  transition: opacity 1.4s ease, box-shadow 1.4s ease;
+  animation: breathe 6.4s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  46%      { transform: scale(1.09); }
+  58%      { transform: scale(0.98); }
+}
+
+.ghostlight__stand {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 2px;
+  height: 6vh;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, color-mix(in oklab, var(--accent) 40%, #0a0a0a), #050505);
+  opacity: 0.6;
+}
+
+/* ---- camera tremor ----
+   The whole frame shakes, because a camera cannot shake selectively.
+   `data-tremble` is written by useCueStage on the .stage root, so this
+   must stay a descendant selector — never `.tremble[data-level]`. */
+
+.stage[data-tremble='low']  { animation: shiver 5.2s steps(3, end) infinite; }
+.stage[data-tremble='mid']  { animation: shiver 2.4s steps(4, end) infinite; }
+.stage[data-tremble='high'] { animation: shiver 0.9s steps(5, end) infinite; }
+
+@keyframes shiver {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  20%      { transform: translate3d(-1px, 1px, 0); }
+  40%      { transform: translate3d(1px, -1px, 0); }
+  60%      { transform: translate3d(-1px, -1px, 0); }
+  80%      { transform: translate3d(1px, 1px, 0); }
+}
+
+/* ---- grain + scanlines ---- */
+
+.grain {
+  position: absolute;
+  inset: -50%;
+  z-index: 8;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain-shift 0.7s steps(4, end) infinite;
+  mix-blend-mode: overlay;
+}
+
+@keyframes grain-shift {
+  0%   { transform: translate3d(0, 0, 0); }
+  25%  { transform: translate3d(-2%, 1%, 0); }
+  50%  { transform: translate3d(1%, -2%, 0); }
+  75%  { transform: translate3d(-1%, -1%, 0); }
+  100% { transform: translate3d(2%, 1%, 0); }
+}
+
+.scanlines {
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  pointer-events: none;
+  opacity: var(--scanline-opacity);
+  background-image: repeating-linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0px,
+    rgba(0, 0, 0, 0) 2px,
+    rgba(0, 0, 0, 0.55) 3px,
+    rgba(0, 0, 0, 0.55) 4px
+  );
+  transition: opacity 0.8s ease;
+}
+
+[data-costume='vhs'] .scanlines {
+  animation: roll 7.5s linear infinite;
+}
+
+@keyframes roll {
+  from { background-position-y: 0; }
+  to   { background-position-y: 120px; }
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  pointer-events: none;
+  background: radial-gradient(115% 88% at 50% 40%, transparent 26%, rgba(0, 0, 0, 0.62) 74%, var(--ink) 100%);
+}
+
+[data-costume='vhs'] .vignette {
+  background: radial-gradient(118% 90% at 50% 42%, transparent 20%, rgba(0, 0, 0, 0.7) 70%, #000 100%);
+}

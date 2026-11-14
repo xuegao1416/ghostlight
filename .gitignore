@@ -1,0 +1,13 @@
+node_modules
+dist
+.DS_Store
+*.local
+.env
+.env.*
+
+# build/verification logs
+*.log
+
+# Kiro must NOT be ignored - the repo root .kiro/ directory is a submission requirement.
+!.kiro
+!.kiro/**

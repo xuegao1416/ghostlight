@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>lab · narrow viewport</title>
+    <style>
+      html,body { margin:0; background:#111; font:12px/1.4 ui-monospace,monospace; color:#888; }
+      .rack { display:flex; gap:22px; padding:16px; align-items:flex-start; }
+      figure { margin:0; }
+      figcaption { padding:6px 0; letter-spacing:.18em; text-transform:uppercase; }
+      iframe { border:1px solid #333; display:block; background:#000; }
+      /* the media queries inside an iframe resolve against the iframe's own
+         viewport, so these are real narrow renders. The tablet frame is only
+         scaled VISUALLY (transform does not change the layout viewport). */
+      .shrink { transform: scale(0.6); transform-origin: top left; }
+      .shrink-wrap { width: 460px; height: 620px; overflow: hidden; border:1px solid #333; }
+    </style>
+  </head>
+  <body>
+    <div class="rack">
+      <figure>
+        <figcaption>390 × 844 · iPhone 14</figcaption>
+        <iframe src="/?sheet=1" width="390" height="844"></iframe>
+      </figure>
+      <figure>
+        <figcaption>360 × 740 · small Android</figcaption>
+        <iframe src="/" width="360" height="740"></iframe>
+      </figure>
+      <figure>
+        <figcaption>768 × 1024 · tablet (scaled 0.6)</figcaption>
+        <div class="shrink-wrap">
+          <iframe class="shrink" src="/?sheet=1" width="768" height="1024"></iframe>
+        </div>
+      </figure>
+    </div>
+  </body>
+</html>

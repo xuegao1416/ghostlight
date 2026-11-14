@@ -1,0 +1,52 @@
+/* ============================================================
+   COSTUME TOKENS
+   A costume is not a skin. It is a complete replacement of the
+   perceptual contract: palette, light behaviour, texture, type.
+   One cue protocol, two completely different rooms.
+   ============================================================ */
+
+[data-costume='seance'] {
+  --ink: #050407;
+  --ink-2: #0b0810;
+  --paper: #e8dcc8;
+  --paper-dim: #9c9184;
+  --accent: #f0b96b;
+  --accent-hot: #ffd9a0;
+  --accent-deep: #8a4a1d;
+  --velvet: #3d0d16;
+  --bleed: transparent;
+
+  --font-prose: 'Cormorant Garamond', Georgia, serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --prose-size: clamp(1.25rem, 2.1vw, 1.7rem);
+  --prose-leading: 1.62;
+  --prose-tracking: 0.006em;
+
+  --grain-opacity: 0.055;
+  --scanline-opacity: 0;
+  --tint: 0deg;
+}
+
+[data-costume='vhs'] {
+  --ink: #03060a;
+  --ink-2: #060c12;
+  --paper: #d6e8e6;
+  --paper-dim: #78968f;
+  --accent: #6fd6cd;
+  --accent-hot: #b6fff6;
+  --accent-deep: #1d5a60;
+  --velvet: #07242c;
+  --bleed: #ff4d9d;
+
+  --font-prose: 'Spectral', Georgia, serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --prose-size: clamp(1.1rem, 1.75vw, 1.42rem);
+  --prose-leading: 1.78;
+  --prose-tracking: 0.014em;
+
+  --grain-opacity: 0.09;
+  --scanline-opacity: 0.14;
+  --tint: -12deg;
+}
