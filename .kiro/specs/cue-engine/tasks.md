@@ -97,7 +97,23 @@ started.
 - [x] 7.2 `.kiro/hooks/stage-integrity.json` — typecheck on save, parity on scene save,
       contract review on stage-file save, session orientation, ship gate on agent stop.
 - [x] 7.3 `.kiro/specs/cue-engine/` three-piece spec.
-- [ ] 7.4 Confirm the hooks fire in a Kiro session and record what each printed.
+- [x] 7.4 `scripts/hooks-selftest.ts` — every `command` hook is executed verbatim with its
+      own timeout, and every `matcher` is run against real repository paths in both
+      separator styles. Exit 0 means the declaration is true, not merely present.
+- [x] 7.5 Prove the self-test can fail: the first run caught four real defects — the parity
+      and stage-contract matchers were written `src/scene/…`, which never matches the
+      `src\scene\…` a Windows checkout hands over, so both gates would have stayed green
+      while never firing. Fixed to `src[\\/]scene[\\/]…` and re-run to 7/7 fixtures agreed.
+- [x] 7.6 Wire `bun run hooks` into `bun run verify`, before `build`. Not into the
+      `AgentStop` ship gate: that hook calls `verify`, so calling the self-test from it
+      would re-execute the self-test from inside the self-test.
+- [ ] 7.7 **Not verified, and not claimed:** the `agent` hook (`stage contract review`)
+      has never run inside a live Kiro session, so nothing here proves that Kiro injects
+      its prompt or that the prompt produces a useful answer. The self-test checks its
+      shape and says out loud that it cannot run it. This is the one honest gap in the
+      Kiro integration; the four `command` hooks have no such gap.
+- [ ] 7.8 Watch the hooks fire in a real Kiro session and paste what each printed. Requires
+      a Kiro install, which this machine does not have.
 
 ## 8. Accessibility and narrow viewports
 
@@ -111,13 +127,13 @@ started.
 
 ## 9. Ship
 
-- [ ] 9.1 `bun run verify` green; paste the three command results into the README.
-- [ ] 9.2 README: what it is, how the cue engine works, how Kiro was used, how to run it.
-- [ ] 9.3 `git init`, initial commit, public GitHub repository, push.
-- [ ] 9.4 Deploy `dist/` to a public URL; put it in the README and the Devpost form.
-- [ ] 9.5 3-minute demo script: open on the house dark, one beat showing the console
+- [x] 9.1 `bun run verify` green; paste the three command results into the README.
+- [x] 9.2 README: what it is, how the cue engine works, how Kiro was used, how to run it.
+- [x] 9.3 `git init`, initial commit, public GitHub repository, push.
+- [x] 9.4 Deploy `dist/` to a public URL; put it in the README and the Devpost form.
+- [x] 9.5 3-minute demo script: open on the house dark, one beat showing the console
       chasing a cue, the wardrobe swap, the same choice in the other costume, ending card,
-      parity output as the last frame.
+      parity output as the last frame. → `DEMO.md`
 - [ ] 9.6 Record, upload, and confirm the video is public.
 
 ## Known-good command output (for the README)

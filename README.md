@@ -12,6 +12,9 @@ output.
 
 **Kiroween 2026 — Costume Contest.**
 
+**Live:** <https://xuegao1416.github.io/ghostlight/> — no install, no account, sound off is fine.
+Add `?sheet=1` to open the cue sheet immediately.
+
 ---
 
 ## The argument
@@ -175,6 +178,32 @@ Kiro was the environment this was designed in, and the `.kiro/` directory is not
 5. **ship gate on agent stop** — typecheck, parity and build before any claim of
    completion. A drifted costume must be reported, not announced as done.
 
+A hook configuration is a declaration, not a promise. A hook that never fires looks
+exactly like a hook that passes, which is the most expensive kind of silence. So
+`scripts/hooks-selftest.ts` makes the declaration falsifiable on two axes: every `command`
+hook is executed verbatim with its own timeout, and every `matcher` is compiled and run
+against real repository paths in both separator styles.
+
+It earned its keep immediately. The first run failed:
+
+```
+FAIL costume parity on scene save...... 2/7 fixtures disagree
+     expected match for "src\scene\tape.ts" — got the opposite
+FAIL stage contract review on source save 2/7 fixtures disagree
+     expected match for "src\styles\stage.css" — got the opposite
+```
+
+Both matchers had been written `src/scene/…`. That matches on the machine the config was
+typed on and never matches the `src\scene\…` a Windows checkout hands over — so the parity
+gate and the contract review would have stayed green while never once firing. Fixed to
+`src[\\/]scene[\\/]…`, re-run, 7/7 fixtures agree. The self-test now runs as part of
+`bun run verify`, ahead of the build.
+
+One honest gap: the `agent` hook (`stage contract review`) has never run inside a live Kiro
+session. The self-test validates its shape and then prints, rather than hides, that it
+cannot execute it. The four `command` hooks have no such gap — they are run, and their exit
+codes are the evidence.
+
 ### Spec — the reasoning, written down
 
 `.kiro/specs/cue-engine/` is a full three-piece spec: `requirements.md` (nine EARS
@@ -189,6 +218,8 @@ the specific reason each one would have broken the console's honesty.
 ---
 
 ## Run it
+
+Live: <https://xuegao1416.github.io/ghostlight/>
 
 ```bash
 bun install

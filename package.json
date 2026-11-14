@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "parity": "bun run scripts/parity.ts",
-    "verify": "bun run typecheck && bun run parity && bun run build"
+    "hooks": "bun run scripts/hooks-selftest.ts",
+    "verify": "bun run typecheck && bun run parity && bun run hooks && bun run build"
   },
   "dependencies": {
     "react": "^19.1.0",

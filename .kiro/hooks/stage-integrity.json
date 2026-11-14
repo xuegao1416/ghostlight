@@ -17,7 +17,7 @@
       "name": "costume parity on scene save",
       "description": "Runs scripts/parity.ts whenever a scene file is saved. This is the only automated defence of the project's central claim — that both costumes perform the identical beat graph — so it must fire before the change can be believed, not at the end of the session.",
       "trigger": "FileSave",
-      "matcher": "src/scene/.*\\.ts$",
+      "matcher": "src[\\\\/]scene[\\\\/].*\\.ts$",
       "action": {
         "type": "command",
         "command": "bun run scripts/parity.ts"
@@ -29,7 +29,7 @@
       "name": "stage contract review on source save",
       "description": "Asks the agent to re-check a saved stage file against the cue contract: no second data source, no visual derived from a beat id, no cue read in a component to decide layout.",
       "trigger": "FileSave",
-      "matcher": "src/(styles|components|hooks)/.*\\.(css|tsx|ts)$",
+      "matcher": "src[\\\\/](styles|components|hooks)[\\\\/].*\\.(css|tsx|ts)$",
       "action": {
         "type": "agent",
         "prompt": "A stage file was just saved. Check it against the cue contract in .kiro/steering/cue-contract.md and report only real violations:\n\n1. Does this file write any --cue-* custom property? Only src/hooks/useCueStage.ts may write them. Components must read.\n2. Does any visual decision in this file depend on a beat id, a scene id, or a costume name rather than on a --cue-* value or a costume token? `[data-costume='vhs']` overrides for structural differences (drop cap, letterpress) are allowed; branching on costume to pick a different layout is not.\n3. Is there a second source of truth for a value the stage already exposes? CueConsole must read the DOM, not React props.\n4. Are units and ranges still inside the contract (0..1 meters, focus -1..1, a mood the palette knows)?\n\nIf nothing is wrong, say so in one line and stop. Do not refactor proactively. Do not restate the contract back to me."

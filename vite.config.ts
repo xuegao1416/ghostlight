@@ -8,6 +8,10 @@ export default defineConfig({
     port: 5199,
     strictPort: true,
   },
+  // Relative asset URLs, so the same build serves from a domain root, from a
+  // GitHub Pages project subpath (/ghostlight/) or from a plain folder with no
+  // rewrite rules. There is no client-side router, so there is nothing to break.
+  base: './',
   build: {
     target: 'es2022',
   },
