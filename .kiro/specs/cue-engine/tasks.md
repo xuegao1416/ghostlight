@@ -127,14 +127,21 @@ started.
 
 ## 9. Ship
 
-- [x] 9.1 `bun run verify` green; paste the three command results into the README.
+- [x] 9.1 `bun run verify` green; paste the four command results into the README.
 - [x] 9.2 README: what it is, how the cue engine works, how Kiro was used, how to run it.
 - [x] 9.3 `git init`, initial commit, public GitHub repository, push.
 - [x] 9.4 Deploy `dist/` to a public URL; put it in the README and the Devpost form.
 - [x] 9.5 3-minute demo script: open on the house dark, one beat showing the console
       chasing a cue, the wardrobe swap, the same choice in the other costume, ending card,
       parity output as the last frame. → `DEMO.md`
-- [ ] 9.6 Record, upload, and confirm the video is public.
+- [x] 9.6 Record, upload, and confirm the video is public. → `scripts/film.ts` drives a
+      headless Edge over CDP and assembles the film with ffmpeg; the result is
+      <https://xuegao1416.github.io/ghostlight/ghostlight-demo.mp4>, served `200`,
+      `Content-Type: video/mp4`, 44,425,644 bytes, 2:51.6, and its `ftyp` box answers a
+      range request at byte 0 — so it streams without sign-in. Uploaded next to the app it
+      shows, so the film and the build cannot drift apart. Re-runnable:
+      `bun run film all --burn` re-shoots it; `bun run film asm --burn` re-assembles an
+      existing shoot in about three minutes.
 
 ## Known-good command output (for the README)
 

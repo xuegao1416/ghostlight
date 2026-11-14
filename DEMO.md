@@ -12,27 +12,35 @@ Nothing in the video should be narrated as a promise. Every claim gets shown.
 
 ---
 
-## Before you hit record
+## How the film is made
+
+This file is the script the film follows. The film itself is not hand-recorded:
+
+```bash
+bun run film all --burn     # shoot every segment, assemble, caption, encode
+bun run film asm --burn     # re-assemble an existing shoot (3 minutes instead of 12)
+```
+
+`scripts/film.ts` drives the **deployed** app in a headless Edge over CDP
+(`Page.startScreencast`), presses the keys a presenter would press, and assembles the frames
+with ffmpeg. So every frame is a pixel the app actually painted, and none of the numbers on
+screen are typed by hand: the beat object comes from importing `src/scene/seance.ts`, and the
+parity output comes from running `bun run parity` at record time — if that script exits
+non-zero the recorder aborts rather than filming a stale claim.
+
+Three things the recorder has to get right, for anyone re-shooting it:
 
 | | |
 | --- | --- |
-| Open | <https://xuegao1416.github.io/ghostlight/?sheet=1> |
-| Window | 1280×800 or larger. Full screen the browser, hide bookmarks bar (`Ctrl+Shift+B`). |
-| Cursor | Park it bottom-left and leave it alone until the wardrobe swap. |
-| Notifications | Off. Do Not Disturb on. |
-| Audio | **None.** The piece is silent by design — captions carry it. Do not add music; it will fight the typewriter rhythm. |
-| Terminal | One window, large font (≥16pt), dark background, `cd D:\cc-hm`, cleared. |
-| Capture | 1920×1080 @ 30fps. If you use OBS, set the stage as a window capture, not a screen capture — no desktop chrome in frame. |
+| Viewport | Shot at 1920×**920**, then padded down to 1080 so the captions get a black band of their own. Overlaying them on a full-height stage put them straight through the prose. |
+| Capture | JPEG q95, ~58fps. PNG tops out at 10.5fps through this screencast, and a curtain that opens in half a second cannot be assembled out of duplicates. |
+| Timing | Every wait is an absolute offset from the segment's first frame, and each assembled segment is checked against its plan (`PART_DRIFT` aborts if a segment is more than 0.75s out). A screencast emits nothing while the page holds still, so an insert card is exactly where a segment silently collapses. |
 
-Record in one take. The typewriter is deterministic; the eyes and fog are not, so a cut
-mid-beat reads as a glitch.
+The finished film is published next to the app rather than on a video host:
+<https://xuegao1416.github.io/ghostlight/ghostlight-demo.mp4> — 2:51.6, no sign-in, and the
+same origin as the build it shows, so the two cannot drift apart.
 
----
-
-## The script
-
-Timecodes are targets, not law. The typewriter has a 46 ms/char rate and every beat can be
-skipped by pressing <kbd>Enter</kbd> — so you are always ahead of the clock, never behind it.
+The rest of this file is what happens on screen and why. Timecodes are targets, not law.
 
 ### 0:00 — 0:14 · Cold open, no narration
 
@@ -47,20 +55,38 @@ video where nothing is being explained, and it is the reason anyone will keep wa
 
 ### 0:14 — 0:34 · The argument
 
-Cut to the terminal. Run:
+Cut to a card over black. The card's contents are not typed by hand — the recorder imports the
+beat and prints it:
 
 ```bash
-sed -n '16,24p' src/scene/seance.ts
+bun -e "const {seance}=await import('./src/scene/seance.ts'); const {text,...rest}=seance.beats.b01; console.log(JSON.stringify(rest,null,2))"
 ```
 
-**On-screen caption:**
-> The beat is not allowed to say `className="scary"`. It says `audience: 0.46`.
+which is the beat the room is performing right now, with the prose elided:
 
-Back to the browser. Point at the frame and say (voiceover, if you are using voice — otherwise
-caption):
+```json
+{ "id": "b01", "direction": "A MATCH, STRUCK. …", "cue": { "mood": "ember", "intensity": 0.46, … }, "next": "b02" }
+```
 
-> The story and the stage are one data model. Every beat carries a cue. The cue is the
-> performance.
+The card shows that object with `"cue"` picked out in the accent colour, and one line under it:
+*No colour. No class name. Six numbers, and the room takes it from here.*
+
+**On-screen captions:**
+> Every line the story speaks becomes a lighting cue.
+>
+> The beat never names a colour, a sound, or a class. It hands over six numbers and the room is
+> obliged to answer.
+
+Back to the browser. Look at the cue sheet, which is still easing:
+
+**Caption — this is the whole argument, so let it land:**
+> The cue says **0.46**. The room says **0.33**. It is not a bug — the light leaves a little
+> behind the words and catches up as they land. The console reads the numbers off the stage
+> itself, so it can show you the room mid-arrival.
+
+That gap is the difference between a story that describes a room and a story that is performed
+in one. Nothing is animating for decoration; the prose and the light are the same event, at two
+different lags.
 
 ### 0:34 — 1:02 · First choice, and the console chasing it
 
@@ -72,7 +98,11 @@ The mood drops to `dread`, fog climbs, the focus slides left.
 Open the cue sheet (<kbd>C</kbd> or the toggle, bottom right). Hold for a beat so the numbers
 are readable while they are still easing:
 
-> `seance/b03b · DREAD · tremble none` — `intensity 0.26 · fog 0.42 · audience 0.18 · focus +0.25`
+> `seance/b03b · DREAD · tremble none` — `intensity 0.24 · fog 0.40 · audience 0.18 · focus +0.25`
+
+Read it while it is short of the cue and it settles: `0.26 · 0.42 · 0.18 · +0.25`. Both numbers
+are true, one second apart. That lag *is* the demo — if you wait for the settled value you have
+only shown a readout, not a performance.
 
 **Caption:**
 > These numbers are not read from React. The console reads the CSS custom properties the
@@ -135,19 +165,25 @@ part of it.
 
 ### 2:30 — 3:00 · The last frame is the check
 
-Cut to the terminal, clear, run:
+Cut to a card over black carrying the real output of:
 
 ```bash
 bun run parity
 ```
 
-Full output, uncut:
+which the recorder ran at shoot time (it aborts if this exits non-zero). Full output, uncut —
+the `endings` rows are folded one ending per line on the card so they stay readable at 480p:
 
 ```
-beats      seance=17  tape=17
-reachable  seance=17  tape=17
-endings    seance: end_dark → House Dark | end_leave → Interval | end_perform → The House Is Full
-           tape:   end_dark → End of Tape | end_leave → Please Rewind | end_perform → You Are the Tape
+beats        seance=17  tape=17
+reachable    seance=17  tape=17
+endings      seance   end_dark → House Dark
+                      end_leave → Interval
+                      end_perform → The House Is Full
+             tape     end_dark → End of Tape
+                      end_leave → Please Rewind
+                      end_perform → You Are the Tape
+
 OK — both costumes perform the identical beat graph (17 beats, 3 endings each).
 ```
 
@@ -157,11 +193,13 @@ OK — both costumes perform the identical beat graph (17 beats, 3 endings each)
 
 Final card over black:
 
-> **GHOSTLIGHT** · a theatre for the dead
+> **GHOSTLIGHT** — a theatre for the dead
 > xuegao1416.github.io/ghostlight
-> Kiroween 2026 — Costume Contest
+> github.com/xuegao1416/ghostlight
+> KIROWEEN 2026 · COSTUME CONTEST
 
-Stop recording at 2:52 so the platform's own end-screen does not push you past 3:00.
+The film lands at **2:51.6**, just under the platform's 3:00 ceiling, so the host's own
+end-screen cannot push the submission over it.
 
 ---
 
@@ -170,14 +208,15 @@ Stop recording at 2:52 so the platform's own end-screen does not push you past 3
 - The cue sheet numbers moving while the fog moves.
 - `audience 1.00` at the moment the eyes appear.
 - The whole room changing colour between the two costumes.
-- The parity output, all five lines, readable without pausing.
+- The parity output in full, readable without pausing — all six rows, including the `endings`
+  rows folded one ending per line so they do not wrap mid-title.
 
-If a line is not readable at 480p, re-record it larger. Judges watch on laptops, often
-without sound — the video is a silent film with subtitles, or it is nothing.
+If a line is not readable at 480p, shoot it larger. Judges watch on laptops, often without
+sound — the video is a silent film with subtitles, or it is nothing.
 
 ---
 
-## Failure modes to avoid while recording
+## Failure modes to avoid
 
 | Don't | Why |
 | --- | --- |
@@ -188,14 +227,20 @@ without sound — the video is a silent film with subtitles, or it is nothing.
 | Add music | The piece is silent. Music reads as "this demo needed help". |
 | Show the file tree | Nobody is impressed by a tree. Show the beat object and the parity output. |
 | Say "AI-powered" | Say what the machine does: it hands the stage a cue. |
+| Put captions on the stage | They go through the prose, which is the one thing the film is about. Hence the padded band. |
 
 ---
 
-## Upload
+## Publishing
 
-- YouTube or Vimeo, **public** (not unlisted — the rules require public).
-- Title: `GHOSTLIGHT — a theatre for the dead (Kiroween 2026, Costume Contest)`
-- Description: the live URL, the repo URL, and the parity output pasted as text.
-- Thumbnail: the b08 frame with the eyes. That frame is the whole pitch.
-- After upload, open it in a private window and confirm it plays without signing in. Then tick
-  `tasks.md` 9.6.
+The film is served from the app's own origin, which is why the URL in the README, the submission
+form and the closing card all agree:
+
+<https://xuegao1416.github.io/ghostlight/ghostlight-demo.mp4>
+
+- Public in the sense that matters: `200`, `Content-Type: video/mp4`, no cookies, no sign-in.
+  Serve it next to the build and it cannot go stale behind the thing it demonstrates.
+- The `ftyp` box is at byte 0 (`+faststart`), so it streams before it finishes downloading.
+- Title, if you cross-post it to a video host: `GHOSTLIGHT — a theatre for the dead (Kiroween
+  2026, Costume Contest)`; description: the live URL, the repo URL, and the parity output
+  pasted as text.

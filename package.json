@@ -11,6 +11,8 @@
     "typecheck": "tsc --noEmit",
     "parity": "bun run scripts/parity.ts",
     "hooks": "bun run scripts/hooks-selftest.ts",
+    "rehearse": "bun run scripts/rehearse.ts",
+    "film": "bun run scripts/film.ts",
     "verify": "bun run typecheck && bun run parity && bun run hooks && bun run build"
   },
   "dependencies": {

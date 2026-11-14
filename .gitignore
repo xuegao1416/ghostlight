@@ -8,6 +8,12 @@ dist
 # build/verification logs
 *.log
 
+# The recorder's working directory: captured frames, browser profiles, the
+# intermediate parts and the assembled master. 1.6 GB on a full shoot, all of it
+# reproducible from scripts/film.ts. The finished film is published next to the
+# app instead, so the URL in the README and the build cannot drift apart.
+__film/
+
 # Kiro must NOT be ignored - the repo root .kiro/ directory is a submission requirement.
 !.kiro
 !.kiro/**

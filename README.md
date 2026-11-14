@@ -15,6 +15,9 @@ output.
 **Live:** <https://xuegao1416.github.io/ghostlight/> — no install, no account, sound off is fine.
 Add `?sheet=1` to open the cue sheet immediately.
 
+**Demo film (2:51):** <https://xuegao1416.github.io/ghostlight/ghostlight-demo.mp4> — the
+same URL as the app, so neither can drift from the other, and no sign-in to watch it.
+
 ---
 
 ## The argument
@@ -235,14 +238,26 @@ bun run verify       # typecheck + parity + hooks + build — all four must pass
 | `bun run typecheck` | The cue shape cannot be constructed wrong anywhere in the app. |
 | `bun run parity` | Both costumes perform the identical play, and every cue is inside the contract. |
 | `bun run hooks` | The Kiro hooks actually fire and actually pass — commands executed, matchers run against real paths. |
+| `bun run rehearse` | The demo video's key sequence still lands on the card it promises, and every number its captions speak is still the cue's number. |
 | `bun run build` | Ships as a static folder. No env vars, no server, no runtime calls. |
+| `bun run film` | Re-shoots the demo film from the deployed app. Not part of `verify` — it needs a headless browser, ffmpeg and twelve minutes. |
 
-Build output — 80 kB gzipped of JavaScript for the whole theatre:
+`bun run rehearse` exists because the demo is one take. `DEMO.md` tells a presenter to press a
+specific sequence of keys and stay on specific frames for specific numbers; that is a claim
+about the beat graph, and re-routing one choice would silently make the recording end on the
+wrong card. The rehearsal replays both takes against the real scene data and asserts the
+quoted cues. It is falsifiable the same way `parity` is: change `end_perform`'s audience from
+`1` to `0.9` and it exits 1 with `FAIL end_perform cue audience is 1 (got 0.9)`; record the
+tape's last key as `3` instead of `2` and it exits 1 with
+`FAIL tape lands on end_dark (got end_leave)`.
+
+Build output — 80 kB gzipped of JavaScript for the whole theatre (hashes are content hashes,
+so they change with the source; sizes are the stable part):
 
 ```
 dist/index.html                   1.07 kB │ gzip:  0.56 kB
 dist/assets/index-BoGCFUsT.css   23.37 kB │ gzip:  5.55 kB
-dist/assets/index-BpduLANr.js   252.79 kB │ gzip: 79.98 kB
+dist/assets/index-FVMJH5W8.js   252.85 kB │ gzip: 80.01 kB
 ```
 
 ### Controls
@@ -272,6 +287,8 @@ the wardrobe moves below the bill rather than guessing where the prose ends.
   hooks/             stage-integrity.json (5 hooks)
   specs/cue-engine/  requirements · design · tasks
 scripts/parity.ts    costume parity + cue contract gate
+scripts/rehearse.ts  the demo's key sequence, replayed against the real graph
+scripts/film.ts      shoots the demo film: headless Edge over CDP, assembled with ffmpeg
 src/
   stage/types.ts     StageCue, Beat, Scene — the only definition
   scene/             seance.ts · tape.ts — the same play, twice

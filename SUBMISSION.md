@@ -25,7 +25,7 @@ Costume Contest
 | --- | --- |
 | Live app | https://xuegao1416.github.io/ghostlight/ |
 | Source | https://github.com/xuegao1416/ghostlight |
-| Video | _pending — see DEMO.md_ |
+| Video | https://xuegao1416.github.io/ghostlight/ghostlight-demo.mp4 (2:51, public, no sign-in) |
 | Built with | Kiro · React 19 · TypeScript 5.9 · Vite 6 · Bun · no CSS framework, no animation library |
 
 ## Short description (~200 words)
@@ -90,8 +90,11 @@ Listed here so they are not discovered by a judge instead:
 1. **The agent hook has never run in a live Kiro session.** This machine has no Kiro
    install. `hooks-selftest.ts` validates its shape and then states, in its own output, that
    it cannot execute it. The four `command` hooks are executed, with exit codes as evidence.
-2. **The video is recorded manually** per `DEMO.md`; the runtime cannot drive a screen
-   capture of a visible window.
+2. **The video is machine-recorded, not hand-recorded.** `scripts/film.ts` drives the deployed
+   app in a headless Edge over CDP `Page.startScreencast` and assembles the frames with
+   ffmpeg, so every frame is a pixel the app actually painted and every key it presses is a
+   key a presenter would press. What it cannot do is show the presenter's own screen; if you
+   want to check the film against the live app, the last card names both URLs.
 3. **No audio.** Deliberate — the piece is text and light; a sound cue would be one more
    thing that can lie about what the stage is doing.
 4. **Two acts, three endings.** The beat graph is closed. It is a finished short piece, not
