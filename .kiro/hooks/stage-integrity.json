@@ -43,14 +43,14 @@
       "trigger": "SessionStart",
       "action": {
         "type": "command",
-        "command": "echo 'GHOSTLIGHT — an interactive haunting where the stage is the interface. Two costumes (seance / vhs), one 17-beat graph, three endings each. The story hands the stage a StageCue; useCueStage eases it into CSS custom properties; every visual derives from them. Read .kiro/steering/cue-contract.md before changing anything under src/styles or src/hooks. Gates: bun run typecheck · bun run parity · bun run build. Never add a second source of truth for a cue value.'"
+        "command": "echo 'GHOSTLIGHT — an interactive haunting where the stage is the interface. Two costumes (seance / vhs), one 17-beat graph, three endings each. The story hands the stage a StageCue; useCueStage eases it into CSS custom properties; every visual derives from them. Read .kiro/steering/cue-contract.md before changing anything under src/styles or src/hooks. Gates: bun run typecheck · bun run parity · bun run hooks · bun run build (bun run verify runs all four). Never add a second source of truth for a cue value.'"
       },
       "timeout": 30,
       "enabled": true
     },
     {
       "name": "ship gate on agent stop",
-      "description": "Before the agent declares work finished, the three gates run. A costume that has drifted or a build that does not compile must be reported, not announced as done.",
+      "description": "Before the agent declares work finished, the gates run. A costume that has drifted or a build that does not compile must be reported, not announced as done. Deliberately calls the gates directly rather than `bun run verify`, because verify also runs hooks-selftest.ts and this hook is one of the hooks that self-test executes — verifying from here would re-enter the self-test from inside the self-test.",
       "trigger": "AgentStop",
       "action": {
         "type": "command",

@@ -173,7 +173,7 @@ Kiro was the environment this was designed in, and the `.kiro/` directory is not
    the saved file: does it write a `--cue-*`; does any visual depend on a beat id; is there
    a second source of truth; are ranges still in contract. It is instructed to report
    violations and stop, not to refactor.
-4. **session orientation** — on `SessionStart`, echoes what the project is, the three gates,
+4. **session orientation** — on `SessionStart`, echoes what the project is, the four gates,
    and the one rule that must never be broken.
 5. **ship gate on agent stop** — typecheck, parity and build before any claim of
    completion. A drifted costume must be reported, not announced as done.
@@ -227,13 +227,14 @@ bun run dev          # http://127.0.0.1:5199
 ```
 
 ```bash
-bun run verify       # typecheck + parity + build — all three must pass
+bun run verify       # typecheck + parity + hooks + build — all four must pass
 ```
 
 | Command | What it proves |
 | --- | --- |
 | `bun run typecheck` | The cue shape cannot be constructed wrong anywhere in the app. |
 | `bun run parity` | Both costumes perform the identical play, and every cue is inside the contract. |
+| `bun run hooks` | The Kiro hooks actually fire and actually pass — commands executed, matchers run against real paths. |
 | `bun run build` | Ships as a static folder. No env vars, no server, no runtime calls. |
 
 Build output — 80 kB gzipped of JavaScript for the whole theatre:
