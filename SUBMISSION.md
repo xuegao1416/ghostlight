@@ -83,6 +83,9 @@ re-run, 7/7 fixtures agree. This is documented in the README rather than quietly
 4. Finish, then press **CHANGE COSTUME**. Same play, same choices, different room.
 5. `bun run parity` for the proof that the two costumes cannot drift apart.
 
+If you only have time for the film: <https://xuegao1416.github.io/ghostlight/ghostlight-demo.mp4>
+— 2:51, silent, captioned, and every number on screen comes from the running app.
+
 ## Honest gaps
 
 Listed here so they are not discovered by a judge instead:
