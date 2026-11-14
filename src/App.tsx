@@ -44,11 +44,18 @@ export default function App() {
   const [reveal, setReveal] = useState(0);
   const ambient: StageCue = useMemo(() => {
     const b = beat.cue;
-    const k = 0.62 + reveal * 0.38;
+    // An ending renders no typewriter, so nothing is still arriving and there
+    // is nothing for the light to wait for. Deriving it here rather than
+    // setting state keeps `reveal` a single-writer value: without this the
+    // last frame of every play sits at k = 0.62 forever, and end_perform would
+    // report 0.59 for a cue that says 0.95 — the climax of the play, dimmed by
+    // a reveal that has no text left to wait on.
+    const r = beat.ending ? 1 : reveal;
+    const k = 0.62 + r * 0.38;
     return {
       ...b,
       intensity: b.intensity * k,
-      fog: b.fog * (0.8 + reveal * 0.2),
+      fog: b.fog * (0.8 + r * 0.2),
     };
   }, [beat, reveal]);
 
@@ -205,7 +212,16 @@ export default function App() {
             key={s.costume}
             className="costumier__btn"
             data-active={s.costume === scene.costume}
-            onClick={() => swapCostume(s.costume)}
+            onClick={(e) => {
+              // The wardrobe outlives every beat, so focus left on it is focus
+              // left on a button for the rest of the play — and the keyboard
+              // handler above yields Enter to a focused control. Clicking
+              // "VHS" and then pressing Enter to advance would do nothing, with
+              // no visible cause. Pointer activation gives the key back to the
+              // room; keyboard users keep both, because Tab never fires a click.
+              if (e.detail > 0) e.currentTarget.blur();
+              swapCostume(s.costume);
+            }}
           >
             {s.costume === 'seance' ? 'Séance' : 'VHS'}
           </button>
